@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RazorPage.Models;
 using System.Configuration;
@@ -18,6 +19,11 @@ namespace RazorPage
                 options.UseSqlServer(connectString);
             });
 
+            // Dang ky dich vu Identity
+            builder.Services.AddIdentity<AppUser, IdentityRole>()
+                .AddEntityFrameworkStores<MyBlogContext>()
+                .AddDefaultTokenProviders();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -33,6 +39,7 @@ namespace RazorPage
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapRazorPages();
