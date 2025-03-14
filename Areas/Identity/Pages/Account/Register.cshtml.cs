@@ -75,8 +75,8 @@ namespace RazorPage.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage ="{0} phai duoc nhap")]
+            [EmailAddress(ErrorMessage ="{0} sai dinh dang")]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
@@ -84,10 +84,10 @@ namespace RazorPage.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [Required(ErrorMessage ="{0} pha duoc nhap")]
+            [StringLength(100, ErrorMessage = "{0} phai chua it nhat {2} va toi da {1} ky tu.", MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "Password")]
+            [Display(Name = "Mat khau")]
             public string Password { get; set; }
 
             /// <summary>
@@ -95,9 +95,15 @@ namespace RazorPage.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Display(Name = "Xac nhan mat khau")]
+            [Compare("Password", ErrorMessage = "{0} khong chinh xac")]
             public string ConfirmPassword { get; set; }
+
+            [DataType(DataType.Text)]
+            [Display(Name = "Ten tai khoan")]
+            [Required(ErrorMessage = "{0} pha duoc nhap")]
+            [StringLength(100, ErrorMessage = "{0} phai chua it nhat {2} va toi da {1} ky tu.", MinimumLength = 6)]
+            public string UserName { get; set; }
         }
 
 
@@ -115,13 +121,13 @@ namespace RazorPage.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                await _userStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
+                    _logger.LogInformation("Da tao tai khoan thanh cong.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -132,8 +138,8 @@ namespace RazorPage.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    await _emailSender.SendEmailAsync(Input.Email, "Xac nhan dia chi Email",
+                        $"Ban da dang ky tai khoan tren Razor Page <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>bam vao day</a> de kich hoat tai khoan.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {

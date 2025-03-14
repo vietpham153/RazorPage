@@ -25,14 +25,14 @@ namespace RazorPage
                 options.UseSqlServer(connectString);
             });
 
-            // Dang ky dich vu Identity
-            //builder.Services.AddIdentity<AppUser, IdentityRole>()
-            //    .AddEntityFrameworkStores<MyBlogContext>()
-            //    .AddDefaultTokenProviders();
-
-            builder.Services.AddDefaultIdentity<AppUser>()
+            //Dang ky dich vu Identity
+            builder.Services.AddIdentity<AppUser, IdentityRole>()
                 .AddEntityFrameworkStores<MyBlogContext>()
                 .AddDefaultTokenProviders();
+
+            //builder.Services.AddDefaultIdentity<AppUser>()
+            //    .AddEntityFrameworkStores<MyBlogContext>()
+            //    .AddDefaultTokenProviders();
 
 
             // Truy cập IdentityOptions
@@ -58,9 +58,22 @@ namespace RazorPage
                 // Cấu hình đăng nhập.
                 options.SignIn.RequireConfirmedEmail = true;            // Cấu hình xác thực địa chỉ email (email phải tồn tại)
                 options.SignIn.RequireConfirmedPhoneNumber = false;     // Xác thực số điện thoại
+                options.SignIn.RequireConfirmedAccount = true;         // Xác thực tài khoản
 
             });
 
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Dangnhap";
+                options.LogoutPath = "/Dangxuat";
+                options.AccessDeniedPath = "/Khongcoquyen";
+            });
+
+            builder.Services.Configure<RouteOptions>(options =>
+            {
+                options.LowercaseUrls = true;
+                options.AppendTrailingSlash = true;
+            });
 
             var app = builder.Build();
 
