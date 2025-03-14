@@ -41,8 +41,8 @@ namespace RazorPage.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage ="{0} phai duoc nhap")]
+            [EmailAddress(ErrorMessage ="{0} phai dung dinh dang")]
             public string Email { get; set; }
 
             /// <summary>
@@ -50,8 +50,9 @@ namespace RazorPage.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [StringLength(100, ErrorMessage = "{0} phai chua it nhat {2} va toi da {1} ky tu.", MinimumLength = 6)]
             [DataType(DataType.Password)]
+            [Display(Name = "Mat khau")]
             public string Password { get; set; }
 
             /// <summary>
@@ -59,8 +60,8 @@ namespace RazorPage.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Display(Name = "Nhap lai mat khau")]
+            [Compare("Password", ErrorMessage = "Mat khau nhap lai khong khop.")]
             public string ConfirmPassword { get; set; }
 
             /// <summary>
@@ -76,7 +77,7 @@ namespace RazorPage.Areas.Identity.Pages.Account
         {
             if (code == null)
             {
-                return BadRequest("A code must be supplied for password reset.");
+                return BadRequest("Ma Token khong chinh xac.");
             }
             else
             {
