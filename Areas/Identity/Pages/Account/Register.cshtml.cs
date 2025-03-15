@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -111,6 +111,13 @@ namespace RazorPage.Areas.Identity.Pages.Account
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+            //duyet va in thong tin:
+            //foreach(var item in ExternalLogins)
+            //{
+            //    _logger.LogInformation($"Provider: {item.DisplayName}");
+            //}
+            //output: Google vi mình đang sử dụng mỗi Google Authentication
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
