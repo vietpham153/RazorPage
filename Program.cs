@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -69,6 +70,12 @@ namespace RazorPage
                 options.AccessDeniedPath = "/Khongcoquyen";
             });
 
+            builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+            {
+                options.TokenLifespan = TimeSpan.FromMinutes(5); // Token chỉ có hiệu lực 5 phút
+            });
+
+
             builder.Services.Configure<RouteOptions>(options =>
             {
                 options.LowercaseUrls = true;
@@ -76,6 +83,32 @@ namespace RazorPage
             });
 
             var app = builder.Build();
+
+            //add Google Authentication
+            builder.Services.AddAuthentication().AddGoogle(googleOptions =>
+            {
+                // Đọc thông tin Authentication:Google từ appsettings.json
+                IConfigurationSection googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
+
+                // Thiết lập ClientID và ClientSecret để truy cập API google
+                googleOptions.ClientId = googleAuthNSection["ClientId"];
+                googleOptions.ClientSecret = googleAuthNSection["ClientSecret"];
+                // Cấu hình Url callback lại từ Google (không thiết lập thì mặc định là /signin-google)
+                // Đây là Url mà Google sẽ gọi lại để trả về thông tin user setup ở URIs trong Google API
+                googleOptions.CallbackPath = "/dang-nhap-tu-google";
+            })
+                .AddFacebook(facebookOptions =>
+            {
+                // Đọc thông tin Authentication:Facebook từ appsettings.json
+                IConfigurationSection FaceNAuth = builder.Configuration.GetSection("Authentication:Facebook");
+
+                // Thiết lập ClientID và ClientSecret để truy cập API google
+                facebookOptions.ClientId = FaceNAuth["ClientId"];
+                facebookOptions.ClientSecret = FaceNAuth["ClientSecret"];
+                // Cấu hình Url callback lại từ Google (không thiết lập thì mặc định là /signin-google)
+                // Đây là Url mà Google sẽ gọi lại để trả về thông tin user setup ở URIs trong Google API
+                facebookOptions.CallbackPath = "/dang-nhap-tu-facebook";
+            });
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

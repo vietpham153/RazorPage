@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -108,7 +108,7 @@ namespace RazorPage.Areas.Identity.Pages.Account
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                ErrorMessage = "Error loading external login information.";
+                ErrorMessage = "Không lấy được thông tin từ dịch vụ ngoài.";
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
@@ -146,12 +146,100 @@ namespace RazorPage.Areas.Identity.Pages.Account
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                ErrorMessage = "Error loading external login information during confirmation.";
+                ErrorMessage = "Không thể lấy thông tin từ dịch vụ ngoài.";
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
             if (ModelState.IsValid)
             {
+                //trường hợp email đã tồn tại trong hệ thống
+                var registeredUser = await _userManager.FindByEmailAsync(Input.Email);
+                string externalEmail = null;
+                AppUser externalEmailUser = null;
+
+                // Claim: Đặc tính duy nhất của người dùng (Email,...)
+                if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
+                {
+                    externalEmail = info.Principal.FindFirstValue(ClaimTypes.Email);
+                }
+
+                if(externalEmail != null)
+                {
+                    externalEmailUser = await _userManager.FindByEmailAsync(externalEmail);
+                }
+
+                if(registeredUser != null && externalEmailUser != null)
+                {
+                    // Hoặc kiểm tra externalEmail == Input.Email
+                    if (registeredUser.Id == externalEmailUser.Id)
+                    {
+                        //liên kết tài khoản và đăng nhập
+                        var resultLink = await _userManager.AddLoginAsync(registeredUser, info);
+                        if(resultLink.Succeeded)
+                        {
+                            await _signInManager.SignInAsync(registeredUser, isPersistent: false);
+                            return LocalRedirect(returnUrl);
+                        }
+                        return Page();
+                    }
+                    else
+                    {
+                        // registerdUser = externalEmailUser (externalEmailUser != Input.Email)
+                        /*
+                         * Thông tin từ dịch vụ ngoài : (infor) ta có user 1 với email 1(abc@gmail.com)
+                         *        người dùng yêu cầu liên kết infor với 1 user có trên hệ thống là user 2 với email 2
+                         *        ==> cho lỗi không thể liên kết vì email đã tồn tại trong hệ thống       
+                         * ==> có nghĩa là khi mình đăng ký bằng google chẳng hạn:
+                         *      mình đăng ký bằng Email 1 nhưng khi tới trang /su-dung-dich-vu-ngoai thì mình lại nhập email 2
+                         *      (2 email đã có trên hệ thống)
+                         *      còn với trường hợp email đàu đã có trên hệ thống khi liên kết thì lại k dùng email có trong hệ thống:
+                         *      
+                         */
+                        ModelState.AddModelError(string.Empty, "Không liên kết được với tài khoản hãy sử dụng Email khác.");
+                        return Page();
+                    }
+                }
+
+                if(externalEmail != null && registeredUser == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Không hỗ trợ tạo tài khoản mới. Có email khác với email từ dịch vụ ngoài");
+                    return Page();
+                }
+
+                if(externalEmail == null && externalEmail == Input.Email)
+                {
+                    // Chưa có account => thực hiện tạo tài khoản nàyn liên kết và đăng nhập ngay.
+                    var newUser = new AppUser() { UserName = externalEmail, Email = externalEmail };
+                    var resultNewUser = await _userManager.CreateAsync(newUser);
+
+                    if (resultNewUser.Succeeded)
+                    {
+                        var resultLink = await _userManager.AddLoginAsync(newUser, info);
+                        // Với việc không phải confirm Email thì dùng:
+                        //if (resultLink.Succeeded)
+                        //{
+                        //    await _signInManager.SignInAsync(newUser, isPersistent: false);
+                        //    return LocalRedirect(returnUrl);
+                        //}
+                        //return Page();
+                        /* Confirm Emai: */
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+                        await _userManager.ConfirmEmailAsync(newUser, code);
+                        await _signInManager.SignInAsync(newUser, isPersistent: false);
+                        return LocalRedirect(returnUrl);
+
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty,"Không tạo được tài khoản mới");
+                        return Page();
+                    }
+                    // sau khi xong thì sẽ tự động đăng nhập **Không có mật khẩu** => không đăng nhập bằng bình thường
+                    // mà bắt buộc phải đăng nhập qua google trang liên kết cũng k loại bỏ được bên liên kết(Google, Facebook)
+                    // Trong trường hợp muốn có thì phải vào quên mật khẩu để xác nhận email và đặt mật khẩu
+                }
+
+                // Các trường hợp khác thì dùng code mặc định dưới đây: 
                 var user = CreateUser();
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
@@ -222,3 +310,7 @@ namespace RazorPage.Areas.Identity.Pages.Account
         }
     }
 }
+
+
+
+// Để đăng nhập bằng FaceBook thì vào Link: https://developers.facebook.com/apps
