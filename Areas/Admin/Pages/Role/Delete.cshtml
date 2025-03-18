@@ -1,0 +1,22 @@
+﻿@page "/admin/delete-role/{routeid}"
+@model RazorPage.Areas.Admin.Pages.Role.DeleteModel
+@{
+	ViewData["title"] = "Xóa vai trò";
+}
+<h2>@ViewData["title"]</h2>
+
+<partial name="_StatusMessage" model="@Model.StatusMessage"></partial>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <p>Bạn có muốn xóa Role: @Model.role.Name</p>
+            <div class="form-group pt-4">
+                <input type="submit" value="Xóa" class="btn btn-danger" />
+                <a class="btn btn-primary" asp-page="./Index">Quay về trang vai trò</a>
+            </div>
+        </form>
+    </div>
+</div>
