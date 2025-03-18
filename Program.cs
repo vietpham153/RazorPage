@@ -27,6 +27,20 @@ namespace RazorPage
                 string connectString = builder.Configuration.GetConnectionString("DbConnect");
                 options.UseSqlServer(connectString);
             });
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AllowEditRole", optionBuilder =>
+                {
+                    // Yeu cau dang nhap
+                    optionBuilder.RequireAuthenticatedUser();
+                    // Yeu cau role nguoi dung la Admin
+                    optionBuilder.RequireRole("Admin");
+                    // Chuyen qua dung claim-based authorization:
+
+                    //optionBuilder.RequireClaim()
+
+                });
+            });
 
             //Dang ky dich vu Identity
             builder.Services.AddIdentity<AppUser, IdentityRole>()

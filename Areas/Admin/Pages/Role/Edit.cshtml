@@ -1,11 +1,11 @@
 ﻿@page "/admin/edit-role/{routeid}"
 @model RazorPage.Areas.Admin.Pages.Role.EditModel
 @{
-	ViewData["title"] = "Sửa tên vai trò";
+    ViewData["title"] = "Sửa tên vai trò";
 }
 <h2>@ViewData["title"]</h2>
 
-<partial name="_StatusMessage" model="@Model.StatusMessage"></partial>
+    <partial name="_StatusMessage" model="@Model.StatusMessage"></partial>
 
 <hr />
 <div class="row">
@@ -23,6 +23,20 @@
                 <a class="btn btn-primary" asp-page="./Index">Quay về trang vai trò</a>
             </div>
         </form>
+        <hr />
+        <p>Các đặc tính của vai trò:
+            <a asp-page="./AddRoleClaim" asp-route-roleid="@Model.role.Id">+ Thêm các đặc tính</a>
+        </p>
+
+        @if(Model.Claims.Count > 0)
+        {
+            <ul>
+                @foreach(var claim in Model.Claims)
+                {
+                    <li>@claim.ClaimType:@claim.ClaimValue</li>
+                }
+            </ul>
+        }
     </div>
 </div>
 

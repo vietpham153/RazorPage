@@ -5,7 +5,7 @@
 }
 <h2>@ViewData["title"]</h2>
 
-<partial name="_StatusMessage" model="@Model.StatusMessage"></partial>
+	<partial name="_StatusMessage" model="@Model.StatusMessage"></partial>
 
 <div class="mb-2">
 	<a class="btn btn-secondary" asp-page="./Create">Thêm</a>
@@ -20,7 +20,15 @@
 	@foreach(var role in Model.roles)
 	{
 		<tr>
-			<th>@role.Name</th>
+			<th>
+				<p>
+					@role.Name
+				</p>		
+				@foreach(var claim in role.Claims)
+				{
+					<small>@claim</small><br />
+				}
+			</th>
 			<th>
 				<a class="btn btn-success btn-sm" asp-page="./Edit" asp-route-routeid="@role.Id">Cập nhật</a>
 				<a class="btn btn-success btn-sm" asp-page="./Delete" asp-route-routeid="@role.Id">Xóa</a>
