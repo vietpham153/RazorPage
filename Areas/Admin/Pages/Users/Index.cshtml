@@ -1,0 +1,50 @@
+﻿@page "/admin/user-mangager"
+@model RazorPage.Areas.Admin.Pages.Users.IndexModel
+
+@{
+	ViewData["title"] = "Danh sách các thành viên";
+}
+<h2>@ViewData["title"]</h2>
+<p>Tổng số các thành viên: @Model.totalUsers</p>
+@{
+
+	var pagingModel = new RazorPage.Helpers.PagingModel()
+			{
+				currentPages = Model.currentPages,
+				countPages = Model.countPages,
+				generateUrl = (int? p) => Url.Page("./Index", new { p = p })
+			};
+
+}
+
+	<partial name="_StatusMessage" model="@Model.StatusMessage"></partial>
+
+
+<table class="table">
+	<tr>
+		<th>Tên người dùng</th>
+		<th>Vai trò</th>
+		<th>Tác vụ</th>
+	</tr>
+	@foreach(var user in Model.users)
+	{
+		<tr>
+			<th>@user.UserName</th>
+			<th>
+				@if(string.IsNullOrEmpty(user.roleName))
+				{
+					<a class="text-dark" asp-page="./AddRole" asp-route-id="@user.Id">+ Thêm vai trò</a>
+				}else
+				{
+					<a class="btn btn-success btn-sm" asp-page="./AddRole" asp-route-id="@user.Id">@user.roleName</a>
+				}
+			</th>
+			<th>
+				<a class="btn btn-success btn-sm" asp-page="./SetPassword" asp-route-id="@user.Id">Đặt mật khẩu</a>
+			</th>
+		</tr>
+	}
+</table>
+<div class="align-content-center align-items-center">
+	<partial name="_Paging" model=@pagingModel />
+</div>

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using RazorPage.Models;
+using RazorPage.Services;
 using System.Configuration;
 
 namespace RazorPage
@@ -17,6 +18,7 @@ namespace RazorPage
             var mailsetting = builder.Configuration.GetSection("MailSettings");
             builder.Services.Configure<MailSettings>(mailsetting);
             builder.Services.AddSingleton<IEmailSender, SendMailService>();
+            builder.Services.AddSingleton<IdentityErrorDescriber,AddIdentityErrorMessage>();
 
             // Add services to the container.
             builder.Services.AddRazorPages();
