@@ -1,0 +1,39 @@
+﻿@page "/admin/edit-role-claims/{claimid}"
+@model RazorPage.Areas.Admin.Pages.Role.EditClaimsModel
+@{
+    ViewData["title"] = "Gán đặc tính";
+}
+<h2>@ViewData["title"]: @Model.role.Name</h2>
+
+    <partial name="_StatusMessage" model="@Model.StatusMessage"></partial>
+
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="Input.ClaimType" class="control-label"></label>
+                <input asp-for="Input.ClaimType" class="form-control" />
+                <span asp-validation-for="Input.ClaimType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="Input.ClaimValue" class="control-label"></label>
+                <input asp-for="Input.ClaimValue" class="form-control" />
+                <span asp-validation-for="Input.ClaimValue" class="text-danger"></span>
+            </div>
+            <div class="form-group pt-4">
+                <input type="submit" value="Cap nhat" class="btn btn-primary" />
+                <input type="submit" asp-page-handler="Delete" value="Xoa" class="btn btn-danger" />
+                <a class="btn btn-primary" asp-page="./Edit" asp-route-roleid="@Model.role.Id">Quay về trang sửa vai trò</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

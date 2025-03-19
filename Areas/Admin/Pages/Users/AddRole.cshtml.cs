@@ -22,15 +22,18 @@ namespace RazorPage.Areas.Admin.Pages.Users
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly MyBlogContext _myBlogContext;
 
         public AddRoleModel(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            MyBlogContext myBlogContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _myBlogContext = myBlogContext;
         }
 
         /// <summary>
@@ -57,6 +60,8 @@ namespace RazorPage.Areas.Admin.Pages.Users
 
         public AppUser user { get; set; }
         public SelectList allRoles { get; set; }
+        public List<IdentityRoleClaim<string>> claimsInRole { get; set; }
+        public List<IdentityUserClaim<string>> claimsInUser { get; set; }
 
         public async Task<IActionResult> OnGetAsync(string id)
         {
@@ -75,7 +80,26 @@ namespace RazorPage.Areas.Admin.Pages.Users
             List<string> roleNames = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
             allRoles = new SelectList(roleNames);
 
+            await GetClaimsAsync(id);
+
             return Page();
+        }
+        async Task GetClaimsAsync(string id)
+        {
+            var listRole = from r in _myBlogContext.Roles
+                           join ur in _myBlogContext.UserRoles on r.Id equals ur.RoleId
+                           where ur.UserId == id
+                           select r;
+
+            var _claimsInRole = from c in _myBlogContext.RoleClaims
+                                join r in listRole on c.RoleId equals r.Id
+                                select c;
+
+            claimsInRole = await _claimsInRole.ToListAsync();
+
+            claimsInUser = await (from c in _myBlogContext.UserClaims
+                         where c.UserId == id
+                         select c).ToListAsync();
         }
 
         public async Task<IActionResult> OnPostAsync(string id)
@@ -89,6 +113,8 @@ namespace RazorPage.Areas.Admin.Pages.Users
             {
                 return NotFound($"Không thấy người dùng với id = {id}");
             }
+
+            await GetClaimsAsync(id);
 
             var oldRoleName = (await _userManager.GetRolesAsync(user)).ToArray();
 

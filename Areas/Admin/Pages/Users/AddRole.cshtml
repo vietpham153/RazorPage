@@ -14,8 +14,8 @@
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <label asp-for="roleName"></label>
             <div class="form-floating mb-3">
-                
-                
+
+
                 @Html.ListBoxFor(m => m.roleName, Model.allRoles, new
                     {
                         id = "id-select-roles",
@@ -26,6 +26,29 @@
             <button type="submit" class="btn btn-primary">Cập nhật</button>
             <a class="btn btn-primary" asp-page="./Index">Danh sách thành viên</a>
         </form>
+        <hr />
+        <p>Các đặc tính có được từ vai trò:</p>
+        if(@Model.claimsInRole.Count>0)
+        {
+        <ul>
+            @foreach(var claim in Model.claimsInRole)
+            {
+                <a asp-page="./EditUserRoleClaim" asp-page-handler="EditClaim" asp-route-claimid="@claim.Id">@claim.ClaimType : @claim.ClaimValue</a>
+            }
+        </ul>
+        }
+        <p>Các đặc tính riêng của người dùng:
+            <a asp-page="./EditUserRoleClaim" asp-page-handler="AddClaim" asp-route-userid="@Model.user.Id">+ Thêm đặc tính riêng</a>
+        </p>
+        if(@Model.claimsInUser.Count>0)
+        {
+        <ul>
+            @foreach (var claim in Model.claimsInUser)
+            {
+                <li>@claim.ClaimType : @claim.ClaimValue</li>
+            }
+        </ul>
+        }
     </div>
 </div>
 
