@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using RazorPage.Models;
+using App.Models;
 
 #nullable disable
 
-namespace RazorPage.Migrations
+namespace App.Migrations
 {
-    [DbContext(typeof(MyBlogContext))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20250314012721_UpdateUser")]
     partial class UpdateUser
     {

@@ -7,9 +7,9 @@ namespace RazorPage.Pages;
 public class IndexModel : PageModel
 {
     private readonly ILogger<IndexModel> _logger;
-    private readonly MyBlogContext _mbContext;
+    private readonly AppDbContext _mbContext;
 
-    public IndexModel(ILogger<IndexModel> logger,MyBlogContext mbContext)
+    public IndexModel(ILogger<IndexModel> logger,AppDbContext mbContext)
     {
         _mbContext = mbContext;
         _logger = logger;

@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace RazorPage.Models
 {
-    public class MyBlogContext : IdentityDbContext<AppUser>
+    public class AppDbContext : IdentityDbContext<AppUser>
     {
         public DbSet<Article> articles { get; set; }
-        public MyBlogContext(DbContextOptions options) : base(options)
+        public AppDbContext(DbContextOptions options) : base(options)
         {
             
         }

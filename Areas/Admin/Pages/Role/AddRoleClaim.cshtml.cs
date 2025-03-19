@@ -13,7 +13,7 @@ namespace RazorPage.Areas.Admin.Pages.Role
     [Authorize(Roles = "Admin")]
     public class AddRoleClaimModel : RolePageModel
     {
-        public AddRoleClaimModel(RoleManager<IdentityRole> roleManager, MyBlogContext myBlogContext) : base(roleManager, myBlogContext)
+        public AddRoleClaimModel(RoleManager<IdentityRole> roleManager, AppDbContext myBlogContext) : base(roleManager, myBlogContext)
         {
         }
 

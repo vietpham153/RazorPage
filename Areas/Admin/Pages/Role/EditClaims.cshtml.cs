@@ -13,7 +13,7 @@ namespace RazorPage.Areas.Admin.Pages.Role
     [Authorize(Roles = "Admin")]
     public class EditClaimsModel : RolePageModel
     {
-        public EditClaimsModel(RoleManager<IdentityRole> roleManager, MyBlogContext myBlogContext) : base(roleManager, myBlogContext)
+        public EditClaimsModel(RoleManager<IdentityRole> roleManager, AppDbContext myBlogContext) : base(roleManager, myBlogContext)
         {
         }
 
