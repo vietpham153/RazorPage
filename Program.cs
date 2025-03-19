@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using RazorPage.Models;
+using RazorPage.Security.Requirements;
 using RazorPage.Services;
 using System.Configuration;
 
@@ -19,6 +21,7 @@ namespace RazorPage
             builder.Services.Configure<MailSettings>(mailsetting);
             builder.Services.AddSingleton<IEmailSender, SendMailService>();
             builder.Services.AddSingleton<IdentityErrorDescriber,AddIdentityErrorMessage>();
+            builder.Services.AddTransient<IAuthorizationHandler, AppAuthorizationHandler>();
 
             // Add services to the container.
             builder.Services.AddRazorPages();
@@ -37,8 +40,21 @@ namespace RazorPage
                     optionBuilder.RequireRole("Admin");
                     // Chuyen qua dung claim-based authorization:
 
-                    //optionBuilder.RequireClaim()
-
+                    //optionBuilder.RequireClaim("canedit", "user") // Claim(Type,Value)
+                });
+                options.AddPolicy("Genz", optionsBuilder =>
+                {
+                    optionsBuilder.RequireAuthenticatedUser();
+                    optionsBuilder.Requirements.Add(new GenZRequirement());
+                });
+                options.AddPolicy("ShowAdminMenu", optionsBuilder =>
+                {
+                    optionsBuilder.RequireAuthenticatedUser();
+                    optionsBuilder.RequireRole("Admin");
+                });
+                options.AddPolicy("CanUpdateArticle", optionsBuilder =>
+                {
+                    optionsBuilder.Requirements.Add(new ArticleUpdateRequirement());
                 });
             });
 
