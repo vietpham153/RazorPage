@@ -25,7 +25,7 @@ namespace RazorPage
 
             // Add services to the container.
             builder.Services.AddRazorPages();
-            builder.Services.AddDbContext<MyBlogContext>(options =>
+            builder.Services.AddDbContext<AppDbContext>(options =>
             {
                 string connectString = builder.Configuration.GetConnectionString("DbConnect");
                 options.UseSqlServer(connectString);
@@ -60,7 +60,7 @@ namespace RazorPage
 
             //Dang ky dich vu Identity
             builder.Services.AddIdentity<AppUser, IdentityRole>()
-                .AddEntityFrameworkStores<MyBlogContext>()
+                .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
             //builder.Services.AddDefaultIdentity<AppUser>()

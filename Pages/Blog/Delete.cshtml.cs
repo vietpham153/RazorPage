@@ -11,9 +11,9 @@ namespace RazorPage.Pages_Blog
 {
     public class DeleteModel : PageModel
     {
-        private readonly RazorPage.Models.MyBlogContext _context;
+        private readonly RazorPage.Models.AppDbContext _context;
 
-        public DeleteModel(RazorPage.Models.MyBlogContext context)
+        public DeleteModel(RazorPage.Models.AppDbContext context)
         {
             _context = context;
         }

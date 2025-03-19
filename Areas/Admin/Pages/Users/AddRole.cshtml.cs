@@ -22,13 +22,13 @@ namespace RazorPage.Areas.Admin.Pages.Users
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly MyBlogContext _myBlogContext;
+        private readonly AppDbContext _myBlogContext;
 
         public AddRoleModel(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
             RoleManager<IdentityRole> roleManager,
-            MyBlogContext myBlogContext)
+            AppDbContext myBlogContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;

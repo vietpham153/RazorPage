@@ -13,12 +13,12 @@ namespace RazorPage.Pages_Blog
     [Authorize]
     public class IndexModel : PageModel
     {
-        private readonly RazorPage.Models.MyBlogContext _context;
+        private readonly RazorPage.Models.AppDbContext _context;
         public const int ITEMS_PER_PAGE = 10;
         [BindProperty(SupportsGet = true, Name = "p")]
         public int currentPages { get; set; }
         public int countPages { get; set; }
-        public IndexModel(RazorPage.Models.MyBlogContext context)
+        public IndexModel(RazorPage.Models.AppDbContext context)
         {
             _context = context;
         }

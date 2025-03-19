@@ -13,10 +13,10 @@ namespace RazorPage.Pages_Blog
 {
     public class EditModel : PageModel
     {
-        private readonly MyBlogContext _context;
+        private readonly AppDbContext _context;
         private readonly IAuthorizationService _authorizationService;
 
-        public EditModel(MyBlogContext context,IAuthorizationService authorizationService)
+        public EditModel(AppDbContext context,IAuthorizationService authorizationService)
         {
             _context = context;
             _authorizationService = authorizationService;

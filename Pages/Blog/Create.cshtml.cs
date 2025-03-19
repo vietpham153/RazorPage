@@ -11,9 +11,9 @@ namespace RazorPage.Pages_Blog
 {
     public class CreateModel : PageModel
     {
-        private readonly RazorPage.Models.MyBlogContext _context;
+        private readonly RazorPage.Models.AppDbContext _context;
 
-        public CreateModel(RazorPage.Models.MyBlogContext context)
+        public CreateModel(RazorPage.Models.AppDbContext context)
         {
             _context = context;
         }

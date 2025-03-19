@@ -13,9 +13,9 @@ namespace RazorPage.Pages_Blog
     [Authorize(Policy ="Genz")] // Cho nguoi dung co DoB 1997-2012 truy cap
     public class DetailsModel : PageModel
     {
-        private readonly RazorPage.Models.MyBlogContext _context;
+        private readonly RazorPage.Models.AppDbContext _context;
 
-        public DetailsModel(RazorPage.Models.MyBlogContext context)
+        public DetailsModel(RazorPage.Models.AppDbContext context)
         {
             _context = context;
         }
